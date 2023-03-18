@@ -31,8 +31,15 @@ FASTLMM.UNITIGs.lagPhase.cov.tsv | Unitigs | Lag Phase Duration | Continuous
 FASTLMM.UNITIGs.r.cov.tsv | Unitigs | Average Growth Rate (r) | Continuous
 FASTLMM.UNITIGs.rmax.cov.tsv | Unitigs | Maximum Growth Rate (r max) | Continuous
 
+## Unitig sequences
+
+Unitig file | Description
+-- | --
+Unitigs.mfa.tar.gz | Fasta file containing unitig sequences identified from all the isolates
+Unitigs.matrix.tsv.tar.gz | Text file containing the presence and absence information for unitig in genomes of the isolates
 
 ## Scripts used to annotate SNPs and unitig sequences
+
 Script name | Description
 -- | -- 
 annotate_SNPs.py | Generates a summary of gene features in a reference genome given SNP position
