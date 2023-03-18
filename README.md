@@ -46,5 +46,5 @@ annotate_SNPs.py | Generates a summary of gene features in a reference genome gi
 blast_annotate_fasta.py | Generates a summary of genetic features in GenBank-formatted reference genome(s) associated with given unitig sequences
 
 # Reference
-Chrispin Chaguza, Daan W. Arends, Stephanie W. Lo, Indri Hapsari Putri, John A. Lees, Anne L. Wyllie, Daniel M. Weinberger, Stephen D. Bentley, Marien I. de Jonge4, Amelieke J.H. 
+Chrispin Chaguza, Daan W. Arends, Stephanie W. Lo, Indri Hapsari Putri, John A. Lees, Anne L. Wyllie, Daniel M. Weinberger, Stephen D. Bentley, Marien I. de Jonge, Amelieke J.H. 
 Cremers. **The capsule, lineage and specific loci strongly influence intrinsic pneumococcal growth features**. 2023. Submitted for publication.
