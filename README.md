@@ -49,6 +49,6 @@ File name | Description
 SPN_GROWTH_DATA_PLATES.tsv | Raw in vitro pneumococcal growth data
 
 # Reference
-Chrispin Chaguza, Daan W. Arends, Stephanie W. Lo, Indri Hapsari Putri, John A. Lees, Anne L. Wyllie, Daniel M. Weinberger, Stephen D. Bentley, Marien I. de Jonge, Amelieke J.H. 
-Cremers. **The capsule, lineage and specific loci strongly influence intrinsic pneumococcal growth features**. 2023. Submitted for publication.
+Chrispin Chaguza, Daan W. Arends, Stephanie W. Lo, Indri Hapsari Putri, Anna York, John A. Lees, Anne L. Wyllie, Daniel M. Weinberger, Stephen D. Bentley, Marien I. de Jonge, Amelieke J.H. 
+Cremers. **The capsule, lineage, and specific loci strongly influence intrinsic pneumococcal growth features**. 2023. Submitted for publication.
 
