@@ -1,0 +1,73 @@
+ls *.phe | grep -v tmp | grep -v "__" | grep -v "_" | while read i; do cut -f1,5 ${i} | sed "s:FID:samples:g" > ${i/.phe/}.__.phe; done
+
+bash createUnitigMatrix.sh samples.txt samples.txt 58
+
+./filterKMERS.py --maf 0.05 --kmers Unitigs_ALL.matrix.T.txt
+
+cat Unitigs_ALL.filtered.txt | sed "s:KmerID:KmerID:g" > Unitigs_ALL.filtered.tsv
+cat Unitigs_ALL.filtered.txt | sed "s:KmerID:KmerID:g" > Unitigs_ALL.matrix.tsv
+
+head -1 Unitigs_ALL.matrix.Rtab | tr "\t" "\n" | grep -v Gene > samples.R.txt
+similarity_pyseer --pres Unitigs_ALL.matrix.tsv samples.R.txt > sim.mat.tsv
+
+./phylogeny_distance.py --lmm Pneumoccal_Dutch_isolates.nwk > sim.mat.tsv
+
+
+ls *.__.phe | grep -v tmp | while read i; do r=${i/.__.phe/}; echo -e "--->>>"${r}; pyseer --min-af 0.05 --max-af 0.95 --lmm --continuous --cpu 55 --phenotypes ${i} --pres Unitigs_ALL.filtered.tsv --similarity sim.mat.tsv > pyseer.lmm.Unitigs.${r}.out.tsv; done
+
+ls *.__.phe | grep -v tmp | while read i; do r=${i/.__.phe/}; echo -e "--->>>"${r}; pyseer --min-af 0.05 --max-af 0.95 --lmm --continuous --cpu 55 --phenotypes ${i} --pres Unitigs_ALL.filtered.tsv --similarity sim.mat.tsv --covariates SpnGrowth.cov --use-covariates 2 > pyseer.lmm.Unitigs.${r}.out.SER.tsv; done
+
+./count_patterns.py Unitigs_ALL.filtered.tsv > pyseer.count.unique.patterns.txt
+
+
+datamash transpose < Unitigs_ALL.filtered.txt > Unitigs_ALL.TT.txt;
+
+ls *.phe | grep -v "__" | grep -v tmp | while read j; 
+do
+    datamash transpose < Unitigs_ALL.filtered.txt > Unitigs_ALL_${j/.phe/}.TT.txt;
+    ./makeMapPEDFromMatrix.py Unitigs_ALL_${j/.phe/}.TT.txt ${j};
+done
+
+#echo "Reference" > samples.list; 
+cat samples.txt | cut -f1 -d"." > samples.list;
+seqtk subseq clean.full.aln samples.list > clean.full.R.aln
+
+snp-sites -v -o SNP.vcf clean.full.R.aln;
+
+
+ls *.__.phe | grep -v tmp | while read i; do r=${i/.__.phe/}; echo -e "--->>>"${r}; pyseer --min-af 0.05 --max-af 0.95 --lmm --continuous --cpu 55 --phenotypes ${i} --vcf SNP.vcf --similarity sim.mat.tsv > pyseer.lmm.SNP.${r}.out.tsv; done
+
+ls *.__.phe | grep -v tmp | while read i; do r=${i/.__.phe/}; echo -e "--->>>"${r}; pyseer --min-af 0.05 --max-af 0.95 --lmm --continuous --cpu 55 --phenotypes ${i} --vcf SNP.vcf --similarity sim.mat.tsv --covariates SpnGrowth.cov --use-covariates 2 > pyseer.lmm.SNP.${r}.out.SER.tsv; done
+
+
+ls *.phe | grep -v tmp | while read i; do
+    j=${i%.*};
+    plink --vcf SNP.vcf --recode --pheno ${j}.phe --update-sex ${j}.phe 2 --keep-allele-order --out SNP.filter --maf 0.05 --mind 0.1 --double-id;
+    cat SNP.filter.map | awk '{print 26"\trs"$4"\t"$3"\t"$4}' > XX;
+    mv XX SNP.filter.map; 
+    cp SNP.filter.map SNP_ALL_${j}.map; 
+    cp SNP.filter.ped SNP_ALL_${j}.ped;
+done
+
+
+ls *.phe | grep -v "__" | grep -v tmp | while read i; do
+    r=${i/.phe/};
+    plink --file SNP_ALL_${r} --make-bed --pheno ${r}.phe --keep-allele-order --out SNP_ALL.${r} --maf 0.05 --mind 0.1 --double-id;
+    plink --file Unitigs_ALL_${r} --make-bed --pheno ${r}.phe --keep-allele-order --out Unitigs_ALL.${r} --maf 0.05 --mind 0.1 --double-id;
+done
+
+
+N1=Unitigs_ALL.r;
+plink --file ${N1} --out ${N1} --make-bed;
+gemma -bfile ${N1} -gk 2 -o ${N1}.relatedness.txt;
+
+ls {SNP,Unitigs}_ALL.*.bed | grep -v "__" | while read i;
+do
+    N=${i/.bed/};
+    N1=Unitigs_ALL.r;
+    gemma -bfile ${N} -k output/${N1}.relatedness.txt.sXX.txt -lmm 4 -r2 1 -o ${N}.cov > ${N}.gemma.cov.txt;
+    cp output/${N}.cov.assoc.txt ${N}.GEMMA.txt;
+done
+
+
+ 
